@@ -74,6 +74,15 @@ FROM employees;
 -- 전화번호 : phone_number
 -- 급여 : salary
 -- 연봉 : salary * 12
+SELECT
+    first_name || ' ' || last_name 이름,
+    hire_date 입사일,
+    phone_number 전화번호,
+    salary 급여,
+    salary * 12 연봉
+FROM employees;
+
+
 
 SELECT 
     first_name || ' ' || last_name 이름,
@@ -97,7 +106,7 @@ WHERE salary >= 15000;
 -- 입사일이 07/01/01 이후인 사원의 목록
 SELECT first_name, hire_date
 FROM employees
-WHERE hire_date >= '07/01/01'; -- 여기!!!!!문제!!!
+WHERE hire_date >= '07/01/01';--여기!!!문제!!!
 
 -- 이름이 Lex인 사원의 이름, 급여, 입사일 출력
 SELECT first_name, salary, hire_date
@@ -132,6 +141,9 @@ WHERE commission_pct IS NULL;
 
 -- 연습문제: TODO
 -- 담당 매니저가 없고, 커미션을 받지 않는 사원의 목록
+SELECT * FROM employees
+WHERE manager_id is NULL AND
+    commission_pct is NULL;
 
 -- 집합 연산자: IN
 -- 부서번호가 10, 20, 30인 사원들의 목록
@@ -149,12 +161,12 @@ WHERE department_id IN (10, 20, 30);
 -- ANY 
 SELECT first_name, department_id
 FROM employees
-WHERE department_id =ANY (10, 20, 30);
+WHERE department_id = ANY (10, 20, 30);
 
 -- ALL: 뒤에 나오는 집합 전부 만족
 SELECT first_name, salary 
 FROM employees
-WHERE salary >ALL(12000, 17000);
+WHERE salary > ALL(12000, 17000);
 
 -- LIKE 연산자: 부분 검색
 -- %: 0글자 이상의 정해지지 않은 문자열
@@ -239,11 +251,18 @@ FROM dual;
 SELECT SYSDATE FROM dual;   -- 1행
 SELECT SYSDATE FROM employees;  --  employees의 레코드 개수만큼
 
+-- NLS parameters
+-- https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=hanajava&logNo=220708733692
+SELECT * FROM v$nls_parameters;
+
+-- NLS Date Format 변경
+ALTER SESSION SET nls_date_format='RR/MM/DD';
+
 -- 날짜 관련 단일행 함수
 SELECT sysdate,
     ADD_MONTHS(sysdate, 2), --  2개월 후
     LAST_DAY(sysdate),  --  이번 달의 마지막 날
-    MONTHS_BETWEEN(sysdate, '99/12/31'),    --  1999년 마지막날 이후 몇 달이 지났나?
+    MONTHS_BETWEEN(sysdate, '99/12/31'),    --  1999년 마지막날 이후 몇 달이 지났나? --여기!!!!오류!!!!
     NEXT_DAY(sysdate, 7),
     ROUND(sysdate, 'MONTH'),
     ROUND(sysdate, 'YEAR'),
@@ -286,7 +305,7 @@ FROM dual;
 SELECT TO_CHAR(sysdate, 'YY/MM/DD HH24:MI'),
     SYSDATE + 1,    --  1일 뒤
     SYSDATE - 1,    --  1일 전
-    SYSDATE - TO_DATE('19991231'),
+--    SYSDATE - TO_DATE('19991231'), --여기오류!!!
     TO_CHAR(SYSDATE + 13/24, 'YY/MM/DD HH24:MI') --  13시간 후
 FROM dual;
 
@@ -316,7 +335,7 @@ SELECT first_name, job_id, salary, SUBSTR(job_id, 1, 2),
                                 WHEN 'SA' THEN salary * 0.1
                                 WHEN 'IT' THEN salary * 0.08
                                 ELSE salary * 0.05
-    END bonus
+    END bonus --이열로 출력하라는것
 FROM employees;
 
 -- DECODE 함수
@@ -336,3 +355,15 @@ FROM employees;
 --    부서 코드: 40 ~ 50 -> B-Group
 --    부서 코드: 60 ~ 100 -> C-Group
 --      나머지: REMAINDER
+
+SELECT first_name, department_id,
+    CASE  
+        WHEN department_id BETWEEN 10 AND 30 THEN 'A-Group'
+        WHEN department_id BETWEEN 40 AND 50 THEN 'B-Group'
+        WHEN department_id BETWEEN 60 AND 100  THEN 'C-Group'
+        ELSE 'REMAINDER'
+    END team
+FROM employees;
+
+
+    
