@@ -169,3 +169,170 @@ WHERE first_name LIKE '%am%';
 SELECT first_name, salary
 FROM employees
 WHERE first_name LIKE '_a%';
+
+
+
+
+-- ORDER BY: 정렬
+-- 오름차순: 작은 값 -> 큰 값 ASC(default)
+-- 내림차순: 큰 값 -> 작은 값 DESC
+
+-- 부서번호 오름차순 -> 부서번호, 급여, 이름
+SELECT department_id,
+    salary, first_name
+FROM employees
+ORDER BY department_id; -- 오름차순 정렬
+
+-- 조건: 급여 10000 이상 직원 
+-- 정렬: 급여 내림차순
+SELECT first_name, salary
+FROM employees
+WHERE salary >= 10000
+ORDER BY salary DESC;
+
+-- 출력: 부서 번호, 급여, 이름
+-- 정렬: 1차정렬 부서번호 오름차순, 2차정렬 급여 내림차순
+SELECT department_id, salary, first_name
+FROM employees
+ORDER BY department_id, -- 1차 정렬
+    salary DESC;        --  2차 정렬
+    
+----------
+-- 단일행 함수
+----------
+-- 한 개의 레코드를 입력으로 받는 함수
+-- 문자열 단일행 함수 연습
+SELECT first_name, last_name,
+    CONCAT(first_name, CONCAT(' ', last_name)), -- 연결
+    INITCAP(first_name || ' ' || last_name), -- 각 단어의 첫글자만 대문자
+    LOWER(first_name), -- 모두 소문자
+    UPPER(first_name), -- 모두 대문자
+    LPAD(first_name, 10, '*'), -- 왼쪽 채우기
+    RPAD(first_name, 10, '*')  -- 오른쪽 채우기
+FROM employees;
+
+SELECT LTRIM('     Oracle     '), -- 왼쪽 공백 제거
+    RTRIM('     Oracle     '), -- 오른쪽 공백 제거
+    TRIM('*' FROM '*****Database****'), -- 양쪽의 * 제거
+    SUBSTR('Oracle Database', 8, 4), -- 부분 문자열
+    SUBSTR('Oracle Database', -8, 8) -- 부분 문자열
+FROM dual;
+
+-- 수치형 단일행 함수
+SELECT ABS(-3.14),  --  절댓값
+    CEIL(3.14),     -- 소수점 올림(천정)
+    FLOOR(3.14),    --  소수점 버림(바닥)
+    MOD(7,3),       --  나머지
+    POWER(2, 4),    --  제곱: 2의 4제곱
+    ROUND(3.5),     --  소수점 반올림
+    ROUND(3.14159, 3),  --  소수점 3자리까지 반올림으로 표현
+    TRUNC(3.5),     --  소수점 버림
+    TRUNC(3.14149, 3),  --  소수점 3자리까지 버림으로 표현
+    SIGN(-10)       --  부호 혹은 0
+FROM dual;
+
+----------
+-- DATE FORMAT
+----------
+
+-- 현재 날짜와 시간
+SELECT SYSDATE FROM dual;   -- 1행
+SELECT SYSDATE FROM employees;  --  employees의 레코드 개수만큼
+
+-- 날짜 관련 단일행 함수
+SELECT sysdate,
+    ADD_MONTHS(sysdate, 2), --  2개월 후
+    LAST_DAY(sysdate),  --  이번 달의 마지막 날
+    MONTHS_BETWEEN(sysdate, '99/12/31'),    --  1999년 마지막날 이후 몇 달이 지났나?
+    NEXT_DAY(sysdate, 7),
+    ROUND(sysdate, 'MONTH'),
+    ROUND(sysdate, 'YEAR'),
+    TRUNC(sysdate, 'MONTH'),
+    TRUNC(sysdate, 'YEAR')
+FROM dual;
+
+----------
+-- 변환 함수
+----------
+
+-- TO_NUMBER(s, fmt) : 문자열을 포맷에 맞게 수치형으로 변환
+-- TO_DATE(s, fmt) : 문자열을 포맷에 맞게 날짜형으로 변환
+-- TO_CHAR(o, fmt) : 숫자 or 날짜를 포맷에 맞게 문자형으로 변환
+
+-- TO_CHAR
+SELECT first_name, hire_date,
+    TO_CHAR(hire_date, 'YYYY-MM-DD'),
+    TO_CHAR(sysdate, 'YYYY-MM-DD HH24:MI:SS')
+FROM employees;
+
+SELECT TO_CHAR(3000000, 'L999,999,999') FROM dual;
+
+SELECT first_name, TO_CHAR(salary * 12, '$999,999.00') SAL
+FROM employees;
+
+-- TO_NUMBER: 문자형 -> 숫자형
+SELECT TO_NUMBER('2021'),
+    TO_NUMBER('$1,450.13', '$999,999.99')
+FROM dual;
+
+-- TO_DATE: 문자형 -> 날짜형
+SELECT TO_DATE('1999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+FROM dual;
+
+-- 날짜 연산
+-- Date +(-) Number : 날짜에 일수 더하기(빼기)
+-- Date - Date : 두 Date 사이의 차이 일수
+-- Date +(-) Number / 24: 날짜에 시간 더하기
+SELECT TO_CHAR(sysdate, 'YY/MM/DD HH24:MI'),
+    SYSDATE + 1,    --  1일 뒤
+    SYSDATE - 1,    --  1일 전
+    SYSDATE - TO_DATE('19991231'),
+    TO_CHAR(SYSDATE + 13/24, 'YY/MM/DD HH24:MI') --  13시간 후
+FROM dual;
+
+----------
+-- NULL 관련
+----------
+
+-- NVL 함수
+SELECT first_name, 
+    salary, 
+    commission_pct, 
+    salary * nvl(commission_pct, 0) commission
+FROM employees;
+
+-- NVL2 함수
+SELECT first_name,
+    salary,
+    commission_pct,
+    nvl2(commission_pct, salary * commission_pct, 0) commission
+FROM employees;
+
+-- CASE 함수
+-- AD 관련 직원에게는 20%, SA 관련 직원에게는 10%,
+-- IT 관련 직원에게는 8%, 나머지는 5%
+SELECT first_name, job_id, salary, SUBSTR(job_id, 1, 2),
+    CASE SUBSTR(job_id, 1, 2) WHEN 'AD' THEN salary * 0.2
+                                WHEN 'SA' THEN salary * 0.1
+                                WHEN 'IT' THEN salary * 0.08
+                                ELSE salary * 0.05
+    END bonus
+FROM employees;
+
+-- DECODE 함수
+SELECT first_name, job_id, salary, SUBSTR(job_id, 1, 2),
+    DECODE(SUBSTR(job_id, 1, 2),
+            'AD', salary * 0.2,
+            'SA', salary * 0.1,
+            'IT', salary * 0.08,
+            salary * 0.05)   --  ELSE
+    bonus
+FROM employees;
+
+-- 연습문제:
+-- 직원의 이름, 부서, 팀을 출력
+-- 팀
+--    부서 코드: 10 ~ 30 -> A-Group
+--    부서 코드: 40 ~ 50 -> B-Group
+--    부서 코드: 60 ~ 100 -> C-Group
+--      나머지: REMAINDER
