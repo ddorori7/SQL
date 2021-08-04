@@ -187,6 +187,7 @@ FROM employees emp JOIN employees man
     on emp.manager_id = man.employee_id -- 여기 설정하는거 주의
 where TO_DATE(emp.hire_date, 'YYYY-MM-DD') < TO_DATE( man.hire_date, 'YYYY-MM-DD') ;
 
+
 -- 문제6.나라별로 어떠한 부서들이 위치하고 있는지 파악하려고 합니다. 
 -- 나라명, 나라아이디, 도시명, 도시아이디, 부서명, 부서아이디를 나라명(오름차순)로 정렬하여 출력하세요.
 -- 값이없는 경우 표시하지 않습니다.(27건)
@@ -295,11 +296,26 @@ ORDER BY department_id;
 
 
 --집계함수 실습문제
---문제1.매니저가 있는 직원은 몇명입니까? 아래의 결과가 나오도록 쿼리문을 작성하세요
---문제2.직원중에 최고임금(salary)과 최저임금을 “최고임금, “최저임금” 프로젝션타이틀로 함께 출력해보세요.
---두임금의차이는얼마인가요? “최고임금–최저임금”이란타이틀로함께출력해보세요.
---문제3.마지막으로신입사원이들어온날은언제입니까? 
---다음형식으로출력해주세요.예) 2014년07월10일
+--문제1.매니저가 있는 직원은 몇명입니까? 아래의 결과가 나오도록 쿼리문을 작성하세요(106)
+select count(manager_id)
+from employees;
+
+--문제2.직원중에 최고임금(salary)과 최저임금을 “최고임금, “최저임금” 프로젝션 타이틀로 함께 출력해보세요.
+--두임금의 차이는 얼마인가요? “최고임금–최저임금”이란 타이틀로 함께 출력해보세요.
+select max(salary) 최고임금, min(salary) 최저임금, max(salary)-min(salary) "최고임금-최저임금"
+from employees;
+
+--문제3.마지막으로 신입사원이 들어온 날은 언제입니까? 
+--다음 형식으로 출력해주세요.예) 2014년 07월 10일
+--Oracle에서 Date Format 지정할 때, 형식에 한글 '년월일'을 표기할 때
+
+--SELECT TO_CHAR(SYSDATE, 'YYYY"년"MM"월"DD"일"' ) AS TODAY FROM DUAL;
+--한글 '년월일' 전후에 (")double quotation으로 표기해야 한다.
+--출처: https://ransu.tistory.com/entry/오라클-날짜-형식에-한글-년월일-표기-방법 [잡다한 블로그]
+select to_char(max(HIRE_DATE),'yyyy"년" mm"월" dd"일"')
+from employees;
+
+
 --문제4.부서별로평균임금, 최고임금, 최저임금을부서아이디(department_id)와함께출력합니다.
 --정렬순서는부서번호(department_id)내림차순입니다.
 --문제5.업무( job_id)별로평균임금, 최고임금, 최저임금을업무아이디( job_id)와함께출력하고정렬순서는최저임금내림차순,평균임금(소수점반올림),오름차순순입니다.(정렬순서는최소임금2500 구간일때확인해볼것)
