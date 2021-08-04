@@ -400,18 +400,30 @@ from employees
 where salary BETWEEN 10000 AND 14000
 order by SALARY desc;
 
-
 --문제6.부서번호가 10,90,100인 직원의이름, 월급, 입사일, 부서번호를 나타내시오. 입사일은 1977-12 와같이 표시하시오.
-select 
+select FIRST_NAME, SALARY, to_char(HIRE_DATE, 'yyyy-mm'), DEPARTMENT_ID
+from employees
+where DEPARTMENT_ID in(10,90,100);
 
 --문제7.이름(first_name)에 S또는s가 들어가는 직원의 이름, 월급을 나타내시오
+select first_name, salary
+from employees
+where lower(first_name)like '%s%';
 
 --문제8.전체부서를 출력하려고 합니다. 순서는 부서이름이 긴순서대로 출력해보세오.
+select * from departments
+order by LENGTH(department_name) desc;
 
 --문제9.정확하지 않지만, 지사가 있을것으로 예상되는 나라들을 나라이름을 대문자로 출력하고 올림차순(ASC)으로 정렬해보세오.
+select region_id, upper(country_name)
+from countries
+where region_id is not null;
 
---문제10.입사일이 03/12/31 일 이전입사한 직원의 이름, 월급, 전화번호, 입사일을 출력하세요. 전화번호는 545-343-3433 과같은 형태로 출력하시오
-
+--문제10.입사일이 03/12/31 일 이전입사한 직원의 이름, 월급, 전화번호, 입사일을 출력하세요.
+--전화번호는 545-343-3433 과같은 형태로 출력하시오
+select FIRST_NAME 이름, SALARY 월급, replace(PHONE_NUMBER,'.','-') 전화번호, HIRE_DATE 입사일
+from employees
+where HIRE_DATE < TO_DATE('03/12/31', 'YY/MM/DD');
 
 
     
