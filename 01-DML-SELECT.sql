@@ -376,20 +376,33 @@ FROM employees
 ORDER BY 이름 ASC;
 
 --문제2.업무(jobs)별로 업무이름(job_title)과 최고월급(max_salary)을 월급의 내림차순(DESC)로 정렬하세요.
-SELECT 
-
-
-
+SELECT job_title, max_salary
+FROM jobs
+ORDER BY job_title DESC , max_salary DESC;
 
 --문제3.담당매니저가 배정되어있으나 커미션비율이 없고,
---월급이 3000초과인 직원의 이름, 매니저아이디,커미션비율,월급을 출력하세요.
-
+--월급이 3000초과인 직원의 이름, 매니저 아이디, 커미션 비율, 월급을 출력하세요.
+SELECT first_name, MANAGER_ID, COMMISSION_PCT, SALARY
+FROM employees
+WHERE MANAGER_ID IS NOT NULL AND COMMISSION_PCT IS NULL 
+        AND SALARY > 3000 ;
 
 --문제4.최고월급(max_salary)이 10000 이상인 업무의이름(job_title)과 최고월급(max_salary)을 최고월급의(max_salary) 내림차순(DESC)로 정렬하여 출력하세요. 
+SELECT job_title, max_salary
+FROM jobs
+WHERE max_salary > = 10000
+ORDER BY max_salary DESC;
 
---문제5.월급이 14000 미만 10000 이상인 직원의이름(first_name), 월급, 커미션퍼센트를 월급순(내림차순) 출력하세오.단 커미션퍼센트가 null 이면0 으로 나타내시오
+--문제5.월급이 14000 미만 10000 이상인 직원의이름(first_name), 월급, 커미션퍼센트를 월급순(내림차순) 출력하세오.
+--단 커미션퍼센트가 null 이면0 으로 나타내시오
+select first_name, SALARY, NVL(commission_pct, 0) 
+from employees
+where salary BETWEEN 10000 AND 14000
+order by SALARY desc;
+
 
 --문제6.부서번호가 10,90,100인 직원의이름, 월급, 입사일, 부서번호를 나타내시오. 입사일은 1977-12 와같이 표시하시오.
+select 
 
 --문제7.이름(first_name)에 S또는s가 들어가는 직원의 이름, 월급을 나타내시오
 
