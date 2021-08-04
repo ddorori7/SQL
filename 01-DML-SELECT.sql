@@ -305,7 +305,7 @@ FROM dual;
 SELECT TO_CHAR(sysdate, 'YY/MM/DD HH24:MI'),
     SYSDATE + 1,    --  1일 뒤
     SYSDATE - 1,    --  1일 전
---    SYSDATE - TO_DATE('19991231'), --여기오류!!!
+    SYSDATE - TO_DATE('19991231'),
     TO_CHAR(SYSDATE + 13/24, 'YY/MM/DD HH24:MI') --  13시간 후
 FROM dual;
 
@@ -364,6 +364,41 @@ SELECT first_name, department_id,
         ELSE 'REMAINDER'
     END team
 FROM employees;
+
+-- 실습문제1.
+-- 전체직원의 다음정보를 조회하세요. 
+-- 정렬은 입사일(hire_date)의 올림차순(ASC)으로 가장선임부터 출력이 되도록하세요.
+-- 이름(first_name   last_name),월급(salary),전화번호(phone_number), 입사일(hire_date) 순서
+-- “이름”, “월급”, “전화번호”, “입사일”로 컬럼 이름을 대체해보세요
+SELECT 
+    first_name || ' ' || last_name "이름", salary "월급", phone_number 전화번호, hire_date 입사일
+FROM employees
+ORDER BY 이름 ASC;
+
+--문제2.업무(jobs)별로 업무이름(job_title)과 최고월급(max_salary)을 월급의 내림차순(DESC)로 정렬하세요.
+SELECT 
+
+
+
+
+--문제3.담당매니저가 배정되어있으나 커미션비율이 없고,
+--월급이 3000초과인 직원의 이름, 매니저아이디,커미션비율,월급을 출력하세요.
+
+
+--문제4.최고월급(max_salary)이 10000 이상인 업무의이름(job_title)과 최고월급(max_salary)을 최고월급의(max_salary) 내림차순(DESC)로 정렬하여 출력하세요. 
+
+--문제5.월급이 14000 미만 10000 이상인 직원의이름(first_name), 월급, 커미션퍼센트를 월급순(내림차순) 출력하세오.단 커미션퍼센트가 null 이면0 으로 나타내시오
+
+--문제6.부서번호가 10,90,100인 직원의이름, 월급, 입사일, 부서번호를 나타내시오. 입사일은 1977-12 와같이 표시하시오.
+
+--문제7.이름(first_name)에 S또는s가 들어가는 직원의 이름, 월급을 나타내시오
+
+--문제8.전체부서를 출력하려고 합니다. 순서는 부서이름이 긴순서대로 출력해보세오.
+
+--문제9.정확하지 않지만, 지사가 있을것으로 예상되는 나라들을 나라이름을 대문자로 출력하고 올림차순(ASC)으로 정렬해보세오.
+
+--문제10.입사일이 03/12/31 일 이전입사한 직원의 이름, 월급, 전화번호, 입사일을 출력하세요. 전화번호는 545-343-3433 과같은 형태로 출력하시오
+
 
 
     
