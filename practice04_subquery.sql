@@ -234,9 +234,8 @@ from (select * from employees order by hire_date)
 where rownum < 11;
 
 SELECT EMPLOYEE_ID, FIRST_NAME, SALARY, HIRE_DATE
-FROM (select * from employees order by hire_date)
+FROM employees order by hire_date
 OFFSET 10 ROWS FETCH FIRST 5 ROWS ONLY;
-
 --11에서 15데이터
 --100	Steven	24000	03/06/17
 --137	Renske	3600	03/07/14
