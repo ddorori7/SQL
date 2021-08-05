@@ -100,15 +100,46 @@ where rownum <= 5;
 -- INTERSECT: 교집합
 -- MINUS: 차집합
 
+--05/01/01 이전 입사자 쿼리
 select first_name, salary, hire_date from employees where hire_date < '05/01/01'; --24
-select first_name, salary, hire_date from employees where salary > 12000; --24
+--급여를 12000 초과 수령 사원
+select first_name, salary, hire_date from employees where salary > 12000; --8
+
+select first_name, salary, hire_date from employees where hire_date < '05/01/01'
+union -- 합집합
+select first_name, salary, hire_date from employees where salary > 12000; --26
+
+select first_name, salary, hire_date from employees where hire_date < '05/01/01'
+union all -- 합집합: 중복 허용
+select first_name, salary, hire_date from employees where salary > 12000; --32
+
+select first_name, salary, hire_date from employees where hire_date < '05/01/01'
+INTERSECT -- 교집합(and)
+select first_name, salary, hire_date from employees where salary > 12000; --6
+
+select first_name, salary, hire_date from employees where hire_date < '05/01/01'
+MINUS -- 차집합
+select first_name, salary, hire_date from employees where salary > 12000; --18
 
 
+--순위 함수
+--RANK(): 중복순위가 있으면 건너뛴다 1,2,2,4
+--DENSE_RANK() : 중복순위 상관없이 다음순위 1,2,2,3
+--ROW_NUMBER() : 순위 상관없이 차례대로 1,2,3,4
+select salary, first_name, 
+    rank() over (order by salary desc) rank,
+    DENSE_RANK() over (order by salary desc) dense_rank,
+    row_number() over (order by salary desc) row_number
+from employees;    
 
-
-
-
-
+-- Hierachical Query: 계층적 쿼리
+-- Tree 형태의 구조 추출
+-- LEVEL 가상컬럼이 생긴다
+select level, employee_id, first_name, manager_id
+from employees
+start with manager_id is null -- 트리 시작 조건
+connect by prior employee_id = manager_id -- 앞에있는 employee_id가 manager_id와 일치하는가
+order by level;
 
 --서브쿼리(SUBQUERY)SQL 문제(연습문제)
 
