@@ -1,0 +1,85 @@
+--집계함수 실습문제
+--문제1.매니저가 있는 직원은 몇명입니까? 아래의 결과가 나오도록 쿼리문을 작성하세요(106)
+select count(manager_id) haceMgrCount
+from employees
+Where manager_id is not null;
+
+
+--문제2.직원중에 최고임금(salary)과 최저임금을 “최고임금, “최저임금” 프로젝션 타이틀로 함께 출력해보세요.
+--두임금의 차이는 얼마인가요? “최고임금–최저임금”이란 타이틀로 함께 출력해보세요.
+select max(salary) 최고임금, min(salary) 최저임금, 
+        max(salary)-min(salary) "최고임금-최저임금"
+from employees;
+
+
+--문제3.마지막으로 신입사원이 들어온 날은 언제입니까? 
+--다음 형식으로 출력해주세요.예) 2014년 07월 10일
+--Oracle에서 Date Format 지정할 때, 형식에 한글 '년월일'을 표기할 때
+select to_char(max(HIRE_DATE),'yyyy"년" mm"월" dd"일"')
+from employees;
+--SELECT TO_CHAR(SYSDATE, 'YYYY"년"MM"월"DD"일"' ) AS TODAY FROM DUAL;
+--한글 '년월일' 전후에 (")double quotation으로 표기해야 한다.
+--출처: https://ransu.tistory.com/entry/오라클-날짜-형식에-한글-년월일-표기-방법 [잡다한 블로그]
+
+
+--문제4.부서별로 평균임금, 최고임금, 최저임금을 부서아이디(department_id)와 함께 출력합니다.
+--정렬순서는부서번호(department_id)내림차순입니다.
+select DEPARTMENT_ID, avg(SALARY), max(SALARY), -- avg 포맷팅해보기
+        min(SALARY)
+FROM EMPLOYEES
+group by DEPARTMENT_ID
+order by DEPARTMENT_ID desc;
+
+
+--문제5.업무( job_id)별로평균임금, 최고임금, 최저임금을업무아이디( job_id)와 함께 출력하고 
+--정렬순서는 최저임금 내림차순, 평균임금(소수점반올림), 오름차순순입니다.(정렬순서는최소임금2500 구간일때확인해볼것)
+select JOB_ID, round(avg(salary)), min(salary), max(salary)
+from employees
+group by job_id
+order by min(salary) desc, avg(salary) asc;
+
+
+--문제6.가장오래 근속한 직원의 입사일은 언제인가요? 다음형식으로출력해주세요.예) 2001-01-13 토요일
+select to_char(min(hire_date), 'yyyy-mm-dd day')
+from employees;
+
+
+--문제7.평균임금과 최저임금의 차이가 2000 미만인 부서(department_id), 평균임금, 최저임금
+--그리고(평균임금–최저임금)를(평균임금–최저임금)의 내림차순으로 정렬해서 출력하세요.
+select DEPARTMENT_ID, round(avg(salary),2), min(salary),
+        round(avg(salary),2)-min(salary)
+from employees
+GROUP BY DEPARTMENT_ID --where절은 집계이전 조건
+    HAVING round(avg(salary),2)-min(salary) < 2000   -- having절은 집계이후 조건
+order by round(avg(salary),2)-min(salary) desc;
+
+
+--문제8.업무(JOBS)별로 최고임금과 최저임금의 차이를 출력해보세요. 차이를 확인할 수 있도록 내림차순으로 정렬하세요
+select JOB_ID, max(SALARY) - min(SALARY) as diff
+from employees
+GROUP BY JOB_ID
+order by diff desc;
+
+
+--문제9.2005년 이후 입사자 중 관리자별로 평균급여 최소급여 최대급여를 알아보려고 한다.
+--출력은 관리자별로 평균급여가 5000이상 중에 평균급여 최소급여 최대급여를 출력합니다.
+--평균급여의 내림차순으로 정렬하고 평균급여는 소수점 첫째짜리에서 반올림하여 출력합니다. 
+select MANAGER_ID, round(avg(SALARY)), min(SALARY), max(SALARY)
+from employees
+where hire_date >= '05/01/01'
+group by MANAGER_ID
+    having avg(salary) >= 5000
+order by avg(salary) desc;    
+
+
+--문제10.아래회사는 보너스 지급을 위해 직원을 입사일기준으로 나눌려고 합니다. 
+--입사일이02/12/31일 이전이면 '창립맴버, 03년은'03년입사’, 04년은‘04년입사’
+--이후 입사자는 ‘상장이후입사’ optDate 컬럼의 데이터로 출력하세요. 정렬은입사일로오름차순으로정렬합니다.
+select employee_id, salary,
+    case when hire_date <= '02/12/31' then '창립멤버'
+        when hire_date <= '03/12/31' then '03년 입사'
+        when hire_date <= '04/12/31' then '4년 입사'
+        else '상장이후 입사'
+    end optDate, hire_date
+from employees
+order by hire_date;
