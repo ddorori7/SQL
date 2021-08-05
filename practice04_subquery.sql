@@ -33,7 +33,6 @@ select first_name, salary from employees
 where salary = (select salary from employees where department_id = 110); -- error
 --why? =은 단일행 연산자
 
-
 --결과가 다중행이면 집합 연산자를 활용
 --in(or)
 --salary = 120008 or salary = 8300
@@ -70,6 +69,7 @@ from employees e, (select department_id, max(salary) salary from employees
 where e.department_id = sal.department_id and
         e.salary = sal.salary
 order by e.department_id;        
+  
 
 -- Correlated Query
 --외부 쿼리와 내부 쿼리가 연관관게를 맺는 쿼리
@@ -85,7 +85,7 @@ order by e.department_id;
 
 --2007년 입사자 중에서 급여 순위 5위까지 출력
 select * from employees 
-            where hire_date like '07%'
+            where hire_date like '07%' --like '07%' 07로 시작하는 문자열
             order by salary desc, first_name; -- 맨왼쪽에 출력되는 순서가 rownum
 
 select ROWNUM, first_name
@@ -148,13 +148,94 @@ select count(salary) from employees
 where salary < (select avg(salary) from employees);
 
 --문제2. 평균급여 이상, 최대급여 이하의 월급을 받는사원의 
---직원번호(employee_id), 이름(first_name), 급여(salary), 평균급여, 최대급여를급여의오름차순으로정렬하여출력하세요(51건)
---문제3.직원중Steven(first_name) king(last_name)이소속된부서(departments)가있는곳의주소를알아보려고한다.도시아이디(location_id), 거리명(street_address), 우편번호(postal_code), 도시명(city), 주(state_province), 나라아이디(country_id) 를출력하세요(1건)
---문제4.job_id 가'ST_MAN' 인직원의급여보다작은직원의사번,이름,급여를급여의내림차순으로출력하세요-ANY연산자사용(74건)
---문제5. 각부서별로최고의급여를받는사원의직원번호(employee_id), 이름(first_name)과급여(salary)부서번호(department_id)를조회하세요단조회결과는급여의내림차순으로정렬되어나타나야합니다. 조건절비교, 테이블조인2가지방법으로작성하세요(11건)
---문제6.각업무( job) 별로연봉(salary)의총합을구하고자합니다. 연봉총합이가장높은업무부터업무명( job_title)과연봉총합을조회하시오(19건)
---문제7.자신의부서평균급여보다연봉(salary)이많은직원의직원번호(employee_id), 이름(first_name)과급여(salary)을조회하세요(38건)
---문제8.직원입사일이11번째에서15번째의직원의사번, 이름, 급여, 입사일을입사일순서로출력하세요
+select avg(salary) a, max(salary) m from employees; --최대급여 평균급여
+--직원번호(employee_id), 이름(first_name), 급여(salary), 평균급여, 최대급여를
+--급여의 오름차순으로 정렬하여 출력하세요(51건)
+select e.employee_id 직원번호, e.first_name 이름, e.salary 급여, a 평균급여, m 최대급여
+from employees e 
+        join (select avg(salary) a, max(salary) m from employees)
+        on e.salary >= a and e.salary <= m                 
+order by salary asc;
+    
+--문제3.직원중 Steven(first_name) king(last_name)이 소속된부서(departments)가 있는곳의 주소를 알아보려고 한다.
+select e.department_id 
+from employees e join departments d
+               on d.department_id = e.department_id
+where upper(e.first_name) = 'STEVEN' and upper(e.last_name) = 'KING'; -- 부서찾기   
+
+--도시아이디(location_id), 거리명(street_address), 우편번호(postal_code), 도시명(city), 주(state_province), 나라아이디(country_id) 를 출력하세요(1건)
+select l.location_id 도시아이디, l.street_address 거리명, l.postal_code 우편번호,
+        l.city 도시명, l.state_province 주, l.country_id 나라아이디
+from locations l join departments d
+                on d.location_id = l.location_id
+where d.department_id = (select e.department_id 
+                         from employees e join departments d
+                            on d.department_id = e.department_id
+                        where upper(e.first_name) = 'STEVEN' and upper(e.last_name) = 'KING');                
+                
+
+--문제4.job_id 가 'ST_MAN' 인 직원의 급여보다 작은 직원의 
+select salary from employees where job_id = 'ST_MAN';
+--사번, 이름, 급여를 급여의 내림차순으로 출력하세요 -ANY연산자사용(74건)
+select employee_id 사번, first_name 이름, salary 급여
+from employees
+where salary < any(select salary from employees where job_id = 'ST_MAN');
 
 
+--문제5.각 부서별로 최고의 급여를 받는 사원의 
+--직원번호(employee_id), 이름(first_name)과 급여(salary)부서번호(department_id)를 조회하세요. 
+--단 조회 결과는 급여의 내림차순으로 정렬되어 나타나야 합니다. 
+--조건절비교, 테이블조인 2가지 방법으로 작성하세요(11건)
+select max(salary) from employees
+group by department_id; --그룹별 최고급여 
+--조건절
+select e.employee_id, e.first_name, e.salary, e.department_id
+from employees e
+where e.salary in (select max(salary) from employees m
+                    group by department_id
+                    having e.department_id = m.department_id)
+order by e.salary desc;
+--테이블조인
+select e.employee_id, e.first_name, e.salary, e.department_id
+from employees e join (select max(salary) salary, m.department_id 
+                        from employees m
+                        group by m.department_id) s
+                        on e.department_id = s.department_id and e.salary = s.salary      
+order by e.salary desc;         
 
+--문제6.각업무(job) 별로 연봉(salary)의 총합을 구하고자 합니다. 
+--연봉 총합이 가장 높은 업무부터 업무명(job_title)과 연봉 총합을 조회하시오(19건)
+(select SUM(salary) from employees
+GROUP BY job_id); -- 연봉 총합 구하기
+
+select job_title 업무명, s.salary 연봉총합
+from jobs j join (select SUM(salary) salary, job_id from employees
+                GROUP BY job_id) s
+                on s.job_id = j.job_id
+order by s.salary desc;                
+   
+--문제7.자신의 부서평균 급여보다 연봉(salary)이 많은직원의 
+--직원번호(employee_id), 이름(first_name)과 급여(salary)을 조회하세요(38건)
+select avg(salary) from employees GROUP BY department_id; --부서별 평균 급여 구하기
+
+select employee_id, first_name, salary 
+from employees e
+where e.salary > (select avg(salary) from employees s
+                    GROUP BY department_id
+                    having e.department_id = s.department_id);
+
+--문제8.직원입사일이 11번째에서 15번째의 직원의 사번, 이름, 급여, 입사일을 입사일순서로 출력하세요
+select EMPLOYEE_ID 사번, FIRST_NAME 이름, SALARY 급여, HIRE_DATE 입사일
+from (select * from employees order by hire_date)
+where rownum <= 15 --rownum은 주로 <, <= 사용하며 >, >= 인 경우 ROWNUM은 동작하지 않는다.
+minus
+select EMPLOYEE_ID 사번, FIRST_NAME 이름, SALARY 급여, HIRE_DATE 입사일
+from (select * from employees order by hire_date)
+where rownum < 11;
+
+--11에서 15데이터
+--100	Steven	24000	03/06/17
+--137	Renske	3600	03/07/14
+--200	Jennifer	4400	03/09/17
+--141	Trenna	3500	03/10/17
+--184	Nandita	4200	04/01/27
