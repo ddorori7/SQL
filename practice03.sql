@@ -120,6 +120,24 @@ FROM employees emp JOIN employees man
     on emp.manager_id = man.employee_id -- 여기 설정하는거 주의
 where TO_DATE(emp.hire_date, 'YYYY-MM-DD') < TO_DATE( man.hire_date, 'YYYY-MM-DD') ;
 
+--쌤풀이(self join)
+select e.employee_id, e.first_name, e.hire_date,
+        m.first_name, m.hire_date
+from employees e, employees m
+where e.manager_id = m.employee_id and
+    e.hire_date < m.hire_date;
+
+--조장님 풀이
+SELECT emp.employee_id,
+    emp.first_name,
+    emp.hire_date,
+    mn.first_name,
+    mn.hire_date
+FROM employees emp JOIN employees mn
+                    ON emp.manager_id = mn.employee_id
+WHERE emp.hire_date<mn.hire_date;
+
+
 --------------------------------------------------------------------------------
 
 -- 문제6.나라별로 어떠한 부서들이 위치하고 있는지 파악하려고 합니다. 
@@ -135,6 +153,15 @@ from countries cou
             on dept.location_id = loc.location_id
 order by cou.COUNTRY_NAME asc;      
       
+--쌤풀이
+select country_name, c.country_id, city, l.location_id,
+        department_name, department_id
+from countries c, locations l, departments d
+where c.country_id = l.country_id and
+    l.location_id = d.location_id
+order by c.country_name;    
+    
+--------------------------------------------------------------------------------
 
 -- 문제7.job_history 테이블은 과거의 담당업무의 데이터를 가지고있다.
 -- 과거의 업무아이디(job_id)가 ‘AC_ACCOUNT’로 근무한 사원의 사번, 이름(풀네임), 업무아이디, 시작일, 종료일을출력하세요.
@@ -145,6 +172,14 @@ from  job_history jh join employees emp
      on emp.employee_id = jh.employee_id
 where jh.job_id = 'AC_ACCOUNT';
 
+--쌤풀이
+select e.EMPLOYEE_ID 사번, FIRST_NAME || ' ' || LAST_NAME 이름,
+    j.JOB_ID 업무아이디, start_date 시작일, end_date 종료일
+from employees e, job_history j    
+where e.employee_id = j.employee_id and
+    j.job_id = 'AC_ACCOUNT';
+    
+-------------------------------------------------------------------------------   
 
 -- 문제8.각부서(department)에 대해서 부서번호(department_id), 부서이름(department_name), 
 -- 매니저(manager)의 이름(first_name), 위치(locations)한 도시(city), 나라(countries)의 이름(countries_name)
@@ -157,6 +192,18 @@ from DEPARTMENTS dept
     join countries cou on loc.country_id = cou.country_id
     join regions re on cou.region_id = re.region_id;
     
+--쌤풀이
+select d.department_id, department_name,
+    first_name 매니저이름, city 도시명, 
+    country_name 나라명, region_name 지역명
+from departments d, employees e, locations l, countries c, regions r
+where d.manager_id = e.employee_id and
+    d.location_id = l.location_id and
+    l.country_id = c.country_id and
+    c.region_id = r.region_id
+order by d.department_id;    
+    
+--------------------------------------------------------------------------------
 
 -- 문제9.각사원(employee)에 대해서 
 -- 사번(employee_id), 이름(first_name), 부서명(department_name), 매니저(manager)의 이름(first_name)을조회하세요. 
@@ -165,3 +212,13 @@ select emp.employee_id, emp.first_name, dept.department_name, man.first_name
 from employees emp full outer join departments dept
     on emp.department_id = dept.department_id
     join employees man on dept.manager_id = man.employee_id;
+
+--쌤풀이: outer join, self join
+select e.employee_id, e.first_name, department_name, m.first_name
+from employees e left outer join departments d
+    on e.department_id = d.department_id,
+    employees m
+where e.manager_id = m.employee_id;
+
+    
+    
