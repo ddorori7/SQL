@@ -149,12 +149,10 @@ select count(salary) from employees
 where salary < (select avg(salary) from employees);
 
 -- Q1
-
 SELECT COUNT(salary) 
 FROM employees
 WHERE salary > ( SELECT AVG(salary)
                     FROM employees );
-
 --------------------------------------------------------------------------------
 --문제2. 평균급여 이상, 최대급여 이하의 월급을 받는사원의 
 select avg(salary) a, max(salary) m from employees; --최대급여 평균급여
@@ -169,14 +167,11 @@ order by salary asc;
 
 -- Q2
 -- 사용할 서브쿼리
-SELECT AVG(salary) avgSalary,
-                        MAX(salary) maxSalary
-                    FROM employees;
+SELECT AVG(salary) avgSalary, MAX(salary) maxSalary
+FROM employees;
 -- 답                    
-SELECT e.employee_id, e.first_name,
-    e.salary, t.avgSalary, t.maxSalary
-FROM employees e, ( SELECT AVG(salary) avgSalary,
-                        MAX(salary) maxSalary
+SELECT e.employee_id, e.first_name, e.salary, t.avgSalary, t.maxSalary
+FROM employees e, ( SELECT AVG(salary) avgSalary, MAX(salary) maxSalary
                     FROM employees ) t
 WHERE e.salary BETWEEN t.avgSalary AND t.maxSalary
 ORDER BY salary;
@@ -209,12 +204,7 @@ WHERE department_id = ( SELECT department_id
                         WHERE first_name='Steven' 
                             AND last_name='King' );
 -- 최종 쿼리
-SELECT location_id,
-    street_address, 
-    postal_code,
-    city,
-    state_province,
-    country_id
+SELECT location_id, street_address, postal_code, city,state_province, country_id
 FROM locations
 WHERE location_id = ( SELECT location_id 
                         FROM departments
@@ -268,8 +258,7 @@ FROM employees
 GROUP BY department_id;
 
 -- 최종 쿼리: 조건절 비교
-SELECT employee_id, first_name,
-    salary, department_id
+SELECT employee_id, first_name, salary, department_id
 FROM employees 
 WHERE (department_id, salary) IN 
     ( SELECT department_id, MAX(salary)
@@ -278,8 +267,7 @@ WHERE (department_id, salary) IN
 ORDER BY salary DESC;
 
 -- 최종쿼리: 테이블 조인
-SELECT e.employee_id, e.first_name,
-    e.salary, e.department_id
+SELECT e.employee_id, e.first_name, e.salary, e.department_id
 FROM employees e, 
     ( SELECT department_id, MAX(salary) salary
         FROM employees
@@ -303,8 +291,7 @@ order by s.salary desc;
 SELECT job_id, SUM(salary) sumSalary
 FROM employees GROUP BY job_id;
 -- 최종 쿼리
-SELECT j.job_title,
-    t.sumSalary
+SELECT j.job_title, t.sumSalary
 FROM jobs j, ( SELECT 
                     job_id, 
                     SUM(salary) sumSalary
@@ -351,58 +338,26 @@ SELECT EMPLOYEE_ID, FIRST_NAME, SALARY, HIRE_DATE
 FROM employees order by hire_date
 OFFSET 10 ROWS FETCH FIRST 5 ROWS ONLY;
 
-select rownum rn, EMPLOYEE_ID 사번, FIRST_NAME 이름, SALARY 급여, HIRE_DATE 입사일
-from (select * from employees order by hire_date)
-where rn BETWEEN 11 and 15; -- 안됌.
+
 
 -- Q8
 -- 쿼리 1
-SELECT ROWNUM,
-    employee_id,
-    first_name,
-    salary
-    hire_date
+SELECT ROWNUM, employee_id,first_name,salary,hire_date
 FROM employees
 ORDER BY hire_date asc;
-
 -- 쿼리 2
-SELECT rownum rn,
-    employee_id,
-    first_name,
-    salary,
-    hire_date
-FROM ( SELECT
-            employee_id,
-            first_name,
-            salary,
-            hire_date
+SELECT rownum rn,employee_id, first_name,salary,hire_date
+FROM ( SELECT employee_id, first_name, salary, hire_date
         FROM employees
-        ORDER BY hire_date asc
-    );
+        ORDER BY hire_date asc );
 -- 최종 쿼리
-
-SELECT rn,
-    employee_id,
-    first_name,
-    salary,
-    hire_date
-FROM (
-    SELECT rownum rn,
-        employee_id,
-        first_name,
-        salary,
-        hire_date
-    FROM ( SELECT
-                employee_id,
-                first_name,
-                salary,
-                hire_date
+SELECT rn, employee_id, first_name, salary, hire_date
+FROM (SELECT rownum rn, employee_id, first_name, salary, hire_date
+    FROM ( SELECT employee_id, first_name, salary, hire_date
             FROM employees
-            ORDER BY hire_date asc
-        )
+            ORDER BY hire_date asc )
     )
 WHERE rn BETWEEN 11 AND 15;
-
 
 --11에서 15데이터
 --100	Steven	24000	03/06/17
