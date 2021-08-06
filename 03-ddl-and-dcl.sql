@@ -47,14 +47,70 @@ ALTER USER C##BITUSER -- 사용자 정보 수정
 
 -- 객체 권한 부여
 -- C##BITUSER 사용자에게 HR.EMPLOYEES를 SELECT 할 수 있는 권한 부여
-GRANT select ON c##HR.EMPLOYEES TO C##BITUSER;
+GRANT select ON HR.EMPLOYEES TO C##BITUSER;
 -- 객체 권한 회수
-REVOKE select ON c##HR.EMPLOYEES FROM C##BITUSER;
-GRANT select ON c##HR.EMPLOYEES TO C##BITUSER;
+REVOKE select ON HR.EMPLOYEES FROM C##BITUSER;
+GRANT select ON HR.EMPLOYEES TO C##BITUSER;
 -- 전체 권한 부여시
 -- GRANT all privileges ...
 
+-----------
+-- DDL
+-----------
+-- 이후 C##BITUSER로 진행 > 비번 bituser
 
+-- 현재 내가 소유한 테이블 목록 확인
+select * from tab;
+-- 현재 나에게 주어진 role을 조회
+select * from user_role_privs;
 
+-- create table : 테이블 생성
+create table book(
+    book_id number(5),
+    title varchar2(50),
+    author varchar2(10),
+    pub_date date default sysdate
+);
 
+select * from tab;
+-- 테이블 정의 정보 확인
+desc book; 
 
+-- 서브쿼리를 이용한 테이블 생성
+-- HR스키마의 employees 테이블의 일부 데이터를 추출, 새 테이블 생성
+select * from hr.EMPLOYEES;
+
+-- job_id가 IT_관련 직원들만 뽑아내어 새 테이블 생성
+create table it_emps as (
+    select * from hr.EMPLOYEES
+    where job_id like 'IT_%'
+);
+
+DROP TABLE it_emps; -- 테이블 삭제
+
+desc it_emps;
+select * from it_emps;
+
+-- author 테이블 추가
+create table author(
+    author_id number(10),
+    author_name varchar2(50) not null,
+    author_desc varchar2(500),
+    PRIMARY KEY (author_id) -- 테이블 제약
+);
+
+desc author;
+
+-- book 테이블의 author 컬럼 지우기
+-- 나중에 author 테이블과 FK 연셜
+desc book;
+alter table book drop COLUMN author;
+desc book;
+
+-- author 테이블 참조를 위한 컬럼 author_id 추가
+alter table book add (author_id number(10));
+desc book;
+
+-- book 테이블의 book_id 도 number(10)으로 변경
+alter table book MODIFY (book_id number(10));
+desc book;
