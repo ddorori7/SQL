@@ -5,7 +5,6 @@
 -- SELECT ~ FROM
 ----------
 
-
 -- 전체 데이터의 모든 컬럼 조회
 -- 컬럼의 출력 순서는 정의에 따른다
 SELECT * FROM employees;
