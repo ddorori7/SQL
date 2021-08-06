@@ -114,3 +114,15 @@ desc book;
 -- book 테이블의 book_id 도 number(10)으로 변경
 alter table book MODIFY (book_id number(10));
 desc book;
+
+desc author;
+
+-- book.book_id 에 PK 제약조건 부여
+alter table book
+add constraint pk_book_id PRIMARY KEY (book_id);
+
+-- book.author_id 를 author.author_id를 참조하도록 제약
+alter table book 
+add constraint fk_author_id foreign key (author_id)
+                            REFERENCES author(author_id)
+                            on DELETE CASCADE;
