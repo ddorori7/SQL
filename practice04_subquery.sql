@@ -365,3 +365,7 @@ WHERE rn BETWEEN 11 AND 15;
 --200	Jennifer	4400	03/09/17
 --141	Trenna	3500	03/10/17
 --184	Nandita	4200	04/01/27
+
+select first_name || ' ' || last_name as name, 
+email, phone_number, to_char(hire_date, 'yyyy-mm-dd')
+FROM employees;

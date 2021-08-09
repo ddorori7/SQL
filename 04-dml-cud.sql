@@ -27,7 +27,7 @@ select * from author;
 update author
 set author_desc = '소설가'; -- 조건절 없으면 다 바뀐다 조심!
 
-select * from author;
+select * from author; -- 확인
 rollback;
 
 -- update, delete 쿼리 작성시
@@ -44,7 +44,7 @@ commit; -- 변경사항 반영
 -- hr.employees -> department_id 가 10,20,30
 -- 새테이블 생성
 create table emp123 as 
-    select * from hr.employees; 
+    select * from c##hr.employees; 
 
 desc emp123;   
 

@@ -40,6 +40,8 @@ SELECT * FROM emp_10;
 UPDATE emp_10 SET salary = salary * 2;
 
 DESC book;
+
+select * from author;
 -- 문제ORA-02291: 무결성 제약조건(C##BITUSER.FK_AUTHOR_ID)이 위배되었습니다- 부모 키가 없습니다
 INSERT INTO book (book_id, title, author_id)
 VALUES(1, '토지', 1);
@@ -170,4 +172,3 @@ SELECT * FROM USER_SEQUENCES;
 -- author 테이블 정보 확인(PK)
 select max(author_id) from author; -- 2
 
-insert in

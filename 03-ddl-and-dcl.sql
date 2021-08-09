@@ -47,12 +47,13 @@ ALTER USER C##BITUSER -- 사용자 정보 수정
 
 -- 객체 권한 부여
 -- C##BITUSER 사용자에게 HR.EMPLOYEES를 SELECT 할 수 있는 권한 부여
-GRANT select ON  HR.EMPLOYEES TO C##BITUSER;
+GRANT select ON  c##HR.EMPLOYEES TO C##BITUSER;
 -- 객체 권한 회수
-REVOKE select ON HR.EMPLOYEES FROM C##BITUSER;
-GRANT select ON HR.EMPLOYEES TO C##BITUSER;
--- 전체 권한 부여시
+REVOKE select ON c##HR.EMPLOYEES FROM C##BITUSER;
+GRANT select ON c##HR.EMPLOYEES TO C##BITUSER;
 -- GRANT all privileges ...
+
+SELECT *FROM c##hr.employees; -- 됌
 
 -----------
 -- DDL
@@ -78,11 +79,11 @@ desc book;
 
 -- 서브쿼리를 이용한 테이블 생성
 -- HR스키마의 employees 테이블의 일부 데이터를 추출, 새 테이블 생성
-select * from hr.EMPLOYEES;
+select * from c##HR.EMPLOYEES;
 
 -- job_id가 IT_관련 직원들만 뽑아내어 새 테이블 생성
 create table it_emps as (
-    select * from hr.EMPLOYEES
+    select * from c##hr.EMPLOYEES
     where job_id like 'IT_%'
 );
 
