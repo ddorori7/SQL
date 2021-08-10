@@ -10,7 +10,7 @@ GRANT create view TO C##BITUSER;
 -- C##BITUSER 전환
 -- HR.employees 테이블로부터 department_id=10 사원의 View 생성
 CREATE TABLE emp_123 
-    AS SELECT * FROM c##HR.employees
+    AS SELECT * FROM HR.employees
         WHERE department_id IN (10, 20, 30);
         
 -- Simple View 생성
@@ -84,7 +84,7 @@ WHERE object_type='VIEW';
 -- INSERT, UPDATE, DELETE -> 인덱스의 갱신 발생
 -- HR.employees 테이블 복사 -> s_emp 테이블 생성
 CREATE TABLE s_emp
-    AS SELECT * FROM c##HR.employees;
+    AS SELECT * FROM HR.employees;
     
 SELECT * FROM s_emp;
 
