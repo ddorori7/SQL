@@ -72,7 +72,7 @@ order by e.department_id;
   
 
 -- Correlated Query
---외부 쿼리와 내부 쿼리가 연관관게를 맺는 쿼리
+--외부 쿼리와 내부 쿼리가 연관관계를 맺는 쿼리
 select e.department_id, e.employee_id, e.first_name, e.salary
 from employees e
 where e.salary = (select max(salary) from employees
