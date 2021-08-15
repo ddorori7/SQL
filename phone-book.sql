@@ -11,3 +11,13 @@ CREATE TABLE PHONE_BOOK (
 DESC PHONE_BOOK;    -- 확인
 
 CREATE SEQUENCE seq_phone_book;
+
+select * from PHONE_BOOK;
+
+insert INTO phone_book (id, name, hp, tel)
+
+
+select * from author;
+
+drop table PHONE_BOOK;
+rollback;
