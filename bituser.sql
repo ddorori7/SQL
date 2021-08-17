@@ -16,3 +16,5 @@ VALUES( seq_emaillist_pk.NEXTVAL, '지원', '서', 'qrd7079@gmail.com');
 SELECT * FROM emaillist;
 
 commit;
+
+select * from emaillist;
