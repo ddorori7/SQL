@@ -14,10 +14,12 @@ CREATE SEQUENCE seq_phone_book;
 
 select * from PHONE_BOOK;
 
-insert INTO phone_book (id, name, hp, tel)
+insert INTO phone_book (id, name, hp, tel) 
+values (seq_phone_book.NEXTVAL, '서지이', '4553','4534534');
 
-
-select * from author;
 
 drop table PHONE_BOOK;
 rollback;
+
+select table_name,constraint_name
+from user_constraints;
